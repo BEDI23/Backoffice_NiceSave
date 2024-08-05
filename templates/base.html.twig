@@ -1,17 +1,218 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Dashboard - NiceAdmin !</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{{ asset('img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/quill/quill.snow.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+        <a href="#" class="logo d-flex align-items-center">
+            <img src="{{ asset('img/logo.png') }}" alt="">
+            <span class="d-none d-lg-block">NiceSave</span>
+        </a>
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+            <li class="nav-item dropdown">
+                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-bell"></i>
+                    <span class="badge bg-primary badge-number">?</span>
+                </a><!-- End Notification Icon -->
+
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                    <li class="dropdown-header">
+                        Vous avez une nouvelles notifications
+                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">tous voir</span></a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="notification-item">
+                        <i class="bi bi-exclamation-circle text-warning"></i>
+                        <div>
+                            <h4>Lorem Ipsum</h4>
+                            <p>Quae dolorem earum veritatis oditseno</p>
+                            <p>30 min. ago</p>
+                        </div>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="notification-item">
+                        <i class="bi bi-x-circle text-danger"></i>
+                        <div>
+                            <h4>Atque rerum nesciunt</h4>
+                            <p>Quae dolorem earum veritatis oditseno</p>
+                            <p>1 hr. ago</p>
+                        </div>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="notification-item">
+                        <i class="bi bi-check-circle text-success"></i>
+                        <div>
+                            <h4>Sit rerum fuga</h4>
+                            <p>Quae dolorem earum veritatis oditseno</p>
+                            <p>2 hrs. ago</p>
+                        </div>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li class="notification-item">
+                        <i class="bi bi-info-circle text-primary"></i>
+                        <div>
+                            <h4>Dicta reprehenderit</h4>
+                            <p>Quae dolorem earum veritatis oditseno</p>
+                            <p>4 hrs. ago</p>
+                        </div>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="dropdown-footer">
+                        <a href="#">Afficher toutes les notifications </a>
+                    </li>
+                </ul><!-- End Notification Dropdown Items -->
+            </li><!-- End Notification Nav -->
+
+            <li class="nav-item dropdown pe-3">
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <img src="{{ asset('img/person2.png') }}" alt="Profile" class="rounded-circle">
+                    <span class="d-none d-md-block dropdown-toggle ps-2">{{ app.user.firstname }} {{ app.user.lastname }}</span>
+                </a><!-- End Profile Image Icon -->
+
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <li class="dropdown-header">
+                        <h6>{{ app.user.firstname }} {{ app.user.lastname }}</h6>
+                        <span>{{ app.user.roles|join(' ') }}</span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="{{ path('app_editSuperAdmin') }}">
+                            <i class="bi bi-person"></i>
+                            <span>Mon profile</span>
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+
+                    {% if app.user %}
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ path('app_logout') }}">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Deconnection</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul><!-- End Profile Dropdown Items -->
+            </li><!-- End Profile Nav -->
+        </ul>
+    </nav><!-- End Icons Navigation -->
+</header><!-- End Header -->
+
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+            <a class="nav-link " href="#">
+                <i class="bi bi-grid"></i>
+                <span>Tableau de bord</span>
+            </a>
+        </li><!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ path('app_editSuperAdmin') }}">
+                <i class="bi bi-person"></i>
+                <span>Mon Profile</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-person"></i><span>Administrateur</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ path('app_admin') }}">
+                        <i class="bi bi-circle"></i><span>Profile Administrateur</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('app_registerAdmin') }}">
+                        <i class="bi bi-circle"></i><span>Nouveau administrateur</span>
+                    </a>
+                </li>
+                <li>
+                </li>
+            </ul>
+        </li>
+
+
+        {% if app.user %}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="{{ path('app_logout') }}">
+                    <i class="fas fa-power-off"></i>
+                    <span>Deconnection</span>
+                </a>
+            </li><!-- End Logout Nav -->
+        {% endif %}
+    </ul>
+</aside><!-- End Sidebar-->
+
+<main id="main" class="main">
+    {% block body %}
+
+    {% endblock %}
+</main><!-- End #main -->
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
+<script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
+<script src="{{ asset('vendor/quill/quill.js') }}"></script>
+<script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
+<script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+
+<!-- Template Main JS File -->
+<script src="{{ asset('js/main.js') }}"></script>
+
+</body>
 </html>
