@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Admin;
 use App\Entity\SuperAdmin;
-use App\Entity\User;
-use App\Form\RegistrationFormType;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SuperAdminController extends AbstractController
 {
+
     #[Route('/edit/SuperAdmin', name: 'app_editSuperAdmin')]
     public function edit(Request $request, EntityManagerInterface $em, Security $security): Response
     {
@@ -90,40 +91,115 @@ class SuperAdminController extends AbstractController
     }
 
     #[Route('/Admin', name: 'app_admin')]
-    public function showAdmin(): Response
+    public function showAdmin(AdminRepository $adminRepository): Response
     {
+        $admins = $adminRepository->findAll();
+
         return $this->render('super_admin/ProfileAdmin.html.twig', [
-            'controller_name' => 'SuperAdminController',]);
+            'admins' => $admins,
+        ]);
     }
 
     #[Route('/register/Admin', name: 'app_registerAdmin')]
-    public function register(Request $request, UserPasswordHasherInterface
-                                     $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, EntityManagerInterface $em,
+                             UserPasswordHasherInterface $passwordHasher): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+        if ($request->isMethod('POST')) {
+            // Récupération des données du formulaire
+            $firstname = $request->request->get('firstname');
+            $lastname = $request->request->get('lastname');
+            $email = $request->request->get('email');
+            $plainPassword = $request->request->get('plainPassword');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+            // Validation des données
+            if (empty($firstname) || empty($lastname) || empty($email) || empty($plainPassword)) {
+                $this->addFlash('error', 'Tous les champs doivent être remplis.');
+                return $this->redirectToRoute('app_registerAdmin');
+            }
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // Création d'un nouvel utilisateur
+            $admin = new Admin();
+            $admin->setFirstname($firstname);
+            $admin->setLastname($lastname);
+            $admin->setEmail($email);
+            $admin->setRoles(['ADMINISTRATEUR']);
+            $admin->setPassword($passwordHasher->hashPassword($admin, $plainPassword));
+            $admin->setDateCreate();
 
-            // do anything else you need here, like send an email
+
+            // Enregistrement de l'utilisateur dans la base de données
+            $em->persist($admin);
+            $em->flush();
+
+            $this->addFlash('success', 'L\'administrateur a été ajouté avec succès.');
 
             return $this->redirectToRoute('app_admin');
         }
 
-        return $this->render('super_admin/NewAdmin.html.twig', [
-            'registrationForm' => $form,
-        ]);
+        return $this->render('super_admin/NewAdmin.html.twig');
     }
 
+    #[Route('/admin/{id}/edit', name: 'app_editAdmin', methods: ['POST'])]
+    public function editProfile(Request $request, AdminRepository $adminRepository,
+                                int $id, EntityManagerInterface $em): Response
+    {
+        $admin = $adminRepository->find($id);
+
+        if (!$admin) {
+            throw $this->createNotFoundException('L\'administrateur n\'existe pas.');
+        }
+
+        // Retrieve data from the request
+        $firstname = $request->request->get('firstname');
+        $lastname = $request->request->get('lastname');
+        $email = $request->request->get('email');
+        $address = $request->request->get('address');
+        $phoneNumber = $request->request->get('phoneNumber');
+
+        // Update admin profile
+        $admin->setFirstname($firstname);
+        $admin->setLastname($lastname);
+        $admin->setEmail($email);
+        $admin->setAddress($address);
+        $admin->setPhoneNumber($phoneNumber);
+
+        // Save changes
+            $em->persist($admin);
+            $em->flush();
+            $this->addFlash('success', 'Profil mis à jour avec succès.');
+
+
+        return $this->redirectToRoute('app_admin');
+    }
+
+    #[Route('/admin/{id}/change-password', name: 'app_ChangePasswordAdmin', methods: ['POST'])]
+    public function changePasswordAdmin(Request $request, AdminRepository $adminRepository,
+                                        int $id, UserPasswordHasherInterface $passwordHasher,
+                                        EntityManagerInterface $em): Response
+    {
+        $admin = $adminRepository->find($id);
+
+        if (!$admin) {
+            throw $this->createNotFoundException('L\'administrateur n\'existe pas.');
+        }
+
+        // Retrieve data from the request
+        $newPassword = $request->request->get('newPassword');
+        $renewPassword = $request->request->get('renewPassword');
+
+        // Check password match
+        if ($newPassword !== $renewPassword) {
+            $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+            return $this->redirectToRoute('app_admin');
+        }
+
+        // Encode and set new password
+            $admin->setPassword($passwordHasher->hashPassword($admin, $newPassword));
+            $em->persist($admin);
+            $em->flush();
+            $this->addFlash('success', 'Mot de passe changé avec succès.');
+
+
+        return $this->redirectToRoute('app_admin');
+    }
 }

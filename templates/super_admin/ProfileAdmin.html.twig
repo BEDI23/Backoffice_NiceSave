@@ -1,120 +1,132 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profile{% endblock %}
-
 {% block body %}
     <section class="section profile">
-        <div class="row">
-            <div class="col-xl-4">
-                <div class="card">
-                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-                        <img src="{{ asset('img/person2.png') }}" alt="Profile" class="rounded-circle">
-                        <h2>{{ app.user.lastname }}</h2>
-                        <h3>{{ app.user.roles|join(' ') }}</h3>
+        <div class="container">
+            {% for admin in admins %}
+                <div class="row mb-4">
+                    <!-- Profile Card -->
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                                <img src="{{ asset('img/person2.png') }}" alt="Profile" class="rounded-circle">
+                                <h2>{{ admin.firstname }} {{ admin.lastname }}</h2>
+                                <h3>{{ admin.roles|join(' ') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details and Actions -->
+                    <div class="col-xl-8">
+                        <div class="card">
+                            <div class="card-body pt-3">
+                                <!-- Notification container -->
+                                <div id="notification-container"></div>
+
+                                <!-- Bordered Tabs -->
+                                <ul class="nav nav-tabs nav-tabs-bordered">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview-{{ admin.id }}">Info</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit-{{ admin.id }}">Modifier Profile</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password-{{ admin.id }}">Changer mot de passe</button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab Content -->
+                                <div class="tab-content pt-2">
+                                    <!-- Profile Overview -->
+                                    <div class="tab-pane fade show active profile-overview" id="profile-overview-{{ admin.id }}">
+                                        <h5 class="card-title">Détails du profil</h5>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Nom</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.firstname }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Prénom</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.lastname }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Email</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.email }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Edit -->
+                                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit-{{ admin.id }}">
+                                        <form method="post" action="{{ path('app_editSuperAdmin') }}" class="row g-3 needs-validation" novalidate>
+                                            {% for label, messages in app.flashes %}
+                                                <div class="alert alert-{{ label }}">
+                                                    {% for message in messages %}
+                                                        <p>{{ message }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endfor %}
+                                            <div class="col-md-6">
+                                                <label for="firstname-{{ admin.id }}" class="form-label">Nom</label>
+                                                <input type="text" name="firstname" id="firstname-{{ admin.id }}" class="form-control" value="{{ admin.firstname }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre nom.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="lastname-{{ admin.id }}" class="form-label">Prénom</label>
+                                                <input type="text" name="lastname" id="lastname-{{ admin.id }}" class="form-control" value="{{ admin.lastname }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre prénom.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="phone-{{ admin.id }}" class="form-label">Numéro</label>
+                                                <input type="text" name="phone" id="phone-{{ admin.id }}" class="form-control" value="{{ admin.number }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre numéro de téléphone.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="address-{{ admin.id }}" class="form-label">Adresse</label>
+                                                <input type="text" name="address" id="address-{{ admin.id }}" class="form-control" value="{{ admin.address }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre adresse.</div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="email-{{ admin.id }}" class="form-label">Email</label>
+                                                <input type="email" name="email" id="email-{{ admin.id }}" class="form-control" value="{{ admin.email }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer un email valide.</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Change Password -->
+                                    <div class="tab-pane fade pt-3" id="profile-change-password-{{ admin.id }}">
+                                        <form method="post" action="{{ path('app_ChangePasswordAdmin', { 'id': admin.id }) }}" class="row g-3 needs-validation" novalidate>
+                                            {% for label, messages in app.flashes %}
+                                                <div class="alert alert-{{ label }}">
+                                                    {% for message in messages %}
+                                                        <p>{{ message }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endfor %}
+                                            <div class="col-md-6">
+                                                <label for="newPassword-{{ admin.id }}" class="form-label">Nouveau mot de passe</label>
+                                                <input name="newPassword" type="password" class="form-control" id="newPassword-{{ admin.id }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer un nouveau mot de passe.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="renewPassword-{{ admin.id }}" class="form-label">Confirmer le mot de passe</label>
+                                                <input name="renewPassword" type="password" class="form-control" id="renewPassword-{{ admin.id }}" required>
+                                                <div class="invalid-feedback">Veuillez confirmer votre nouveau mot de passe.</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary">Changer mot de passe</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div><!-- End Bordered Tabs -->
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-xl-8">
-                <div class="card">
-                    <div class="card-body pt-3">
-                        <!-- Notification container -->
-                        <div id="notification-container"></div>
-
-                        <!-- Bordered Tabs -->
-                        <ul class="nav nav-tabs nav-tabs-bordered">
-                            <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Info</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Modifier Profile</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Changer mot de passe</button>
-                            </li>
-                        </ul>
-                        <div class="tab-content pt-2">
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title">Detail profile</h5>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Nom</div>
-                                    <div class="col-lg-9 col-md-8">{{ app.user.firstname }}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Prenom</div>
-                                    <div class="col-lg-9 col-md-8">{{ app.user.lastname }}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Email</div>
-                                    <div class="col-lg-9 col-md-8">{{ app.user.email }}</div>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-                                <!-- Profile Edit Form -->
-                                <form method="post" action="{{ path('app_editSuperAdmin') }}" class="row g-3 needs-validation" novalidate>
-                                    {% for label, messages in app.flashes %}
-                                        <div class="alert alert-{{ label }}">
-                                            {% for message in messages %}
-                                                <p>{{ message }}</p>
-                                            {% endfor %}
-                                        </div>
-                                    {% endfor %}
-                                    <div class="col-md-6">
-                                        <label for="firstname" class="form-label">Nom</label>
-                                        <input type="text" name="firstname" id="firstname" class="form-control" value="{{ app.user.firstname }}" required>
-                                        <div class="invalid-feedback">Veuillez entrer votre nom.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="lastname" class="form-label">Prenom</label>
-                                        <input type="text" name="lastname" id="lastname" class="form-control" value="{{ app.user.lastname }}" required>
-                                        <div class="invalid-feedback">Veuillez entrer votre prénom.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" name="email" id="email" class="form-control" value="{{ app.user.email }}" required>
-                                        <div class="invalid-feedback">Veuillez entrer un email valide.</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <div class="tab-pane fade pt-3" id="profile-change-password">
-                                <!-- Change Password Form -->
-                                <form method="post" action="{{ path('app_ChangePasswordSuper') }}" class="row g-3 needs-validation" novalidate>
-                                    {% for label, messages in app.flashes %}
-                                        <div class="alert alert-{{ label }}">
-                                            {% for message in messages %}
-                                                <p>{{ message }}</p>
-                                            {% endfor %}
-                                        </div>
-                                    {% endfor %}
-                                    <div class="col-md-6">
-                                        <label for="currentPassword" class="form-label">Mot de passe courant</label>
-                                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
-                                        <div class="invalid-feedback">Veuillez entrer votre mot de passe actuel.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="newPassword" class="form-label">Nouveau mot de passe</label>
-                                        <input name="newPassword" type="password" class="form-control" id="newPassword" required>
-                                        <div class="invalid-feedback">Veuillez entrer un nouveau mot de passe.</div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="renewPassword" class="form-label">Confirme mot de passe</label>
-                                        <input name="renewPassword" type="password" class="form-control" id="renewPassword" required>
-                                        <div class="invalid-feedback">Veuillez confirmer votre nouveau mot de passe.</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Changer mot de passe</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div><!-- End Bordered Tabs -->
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
 
