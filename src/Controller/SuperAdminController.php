@@ -21,7 +21,7 @@ class SuperAdminController extends AbstractController
     {
         $user = $security->getUser();
 
-        if (!$user instanceof SuperAdmin) {
+        if (!$user instanceof SuperAdmin & !$user instanceof Admin  ) {
             throw $this->createAccessDeniedException('You do not have access to this section.');
         }
 
@@ -42,7 +42,7 @@ class SuperAdminController extends AbstractController
             return $this->redirectToRoute('app_editSuperAdmin');
         }
 
-        return $this->render('super_admin/ProfileSuperAdmin.html.twig', [
+        return $this->render('super_admin/Profile.html.twig', [
             'user' => $user,
         ]);
     }
@@ -85,7 +85,7 @@ class SuperAdminController extends AbstractController
             return $this->redirectToRoute('app_editSuperAdmin'); // Remplacez cette route par la route appropriée
         }
 
-        return $this->render('super_admin/ProfileSuperAdmin.html.twig', [
+        return $this->render('super_admin/Profile.html.twig', [
             'user' => $user,
         ]);
     }
@@ -95,7 +95,7 @@ class SuperAdminController extends AbstractController
     {
         $admins = $adminRepository->findAll();
 
-        return $this->render('ListeProfileAdmin.html.twig', [
+        return $this->render('super_admin/ListeProfileAdmin.html.twig', [
             'admins' => $admins,
         ]);
     }
