@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="section profile">
+        <div class="container">
+            {% for admin in admins %}
+                <!-- Notification Flash Messages -->
+                {% for label, messages in app.flashes %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+                <!-- Fin des Notifications Flash Messages -->
+                <div class="row mb-4">
+                    <!-- Profile Card -->
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                                <img src="{{ asset('img/person2.png') }}" alt="Profile" class="rounded-circle">
+                                <h2>{{ admin.firstname }} {{ admin.lastname }}</h2>
+                                <h3>{{ admin.roles|join(' ') }}</h3>
+                                <!-- Add a delete button -->
+                                <form method="post" action="{{ path('app_DeleteAdmin', { 'id': admin.id }) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet administrateur ?');">
+                                    <input type="hidden" name="_method" value="DELETE" />
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details and Actions -->
+                    <div class="col-xl-8">
+                        <div class="card">
+                            <div class="card-body pt-3">
+                                <!-- Notification container -->
+                                <div id="notification-container"></div>
+
+                                <!-- Bordered Tabs -->
+                                <ul class="nav nav-tabs nav-tabs-bordered">
+                                    <li class="nav-item">
+                                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview-{{ admin.id }}">Info</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit-{{ admin.id }}">Modifier Profile</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password-{{ admin.id }}">Changer mot de passe</button>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab Content -->
+                                <div class="tab-content pt-2">
+                                    <!-- Profile Overview -->
+                                    <div class="tab-pane fade show active profile-overview" id="profile-overview-{{ admin.id }}">
+                                        <h5 class="card-title">Détails du profil</h5>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Nom</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.firstname }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Prénom</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.lastname }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Email</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.email }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Numero</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.number }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Adress</div>
+                                            <div class="col-lg-9 col-md-8">{{ admin.address }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Edit -->
+                                    <div class="tab-pane fade profile-edit pt-3" id="profile-edit-{{ admin.id }}">
+                                        <form method="post" action="{{ path('app_editAdmin', { 'id': admin.id }) }}" class="row g-3 needs-validation" novalidate>
+                                            <div class="col-md-6">
+                                                <label for="firstname-{{ admin.id }}" class="form-label">Nom</label>
+                                                <input type="text" name="firstname" id="firstname-{{ admin.id }}" class="form-control" value="{{ admin.firstname }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre nom.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="lastname-{{ admin.id }}" class="form-label">Prénom</label>
+                                                <input type="text" name="lastname" id="lastname-{{ admin.id }}" class="form-control" value="{{ admin.lastname }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre prénom.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="phone-{{ admin.id }}" class="form-label">Numéro</label>
+                                                <input type="text" name="phone" id="phone-{{ admin.id }}" class="form-control" value="{{ admin.number }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre numéro de téléphone.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="address-{{ admin.id }}" class="form-label">Adresse</label>
+                                                <input type="text" name="address" id="address-{{ admin.id }}" class="form-control" value="{{ admin.address }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer votre adresse.</div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="email-{{ admin.id }}" class="form-label">Email</label>
+                                                <input type="email" name="email" id="email-{{ admin.id }}" class="form-control" value="{{ admin.email }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer un email valide.</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Change Password -->
+                                    <div class="tab-pane fade pt-3" id="profile-change-password-{{ admin.id }}">
+                                        <form method="post" action="{{ path('app_ChangePasswordAdmin', { 'id': admin.id }) }}" class="row g-3 needs-validation" novalidate>
+                                            {% for label, messages in app.flashes %}
+                                                <div class="alert alert-{{ label }}">
+                                                    {% for message in messages %}
+                                                        <p>{{ message }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endfor %}
+                                            <div class="col-md-6">
+                                                <label for="newPassword-{{ admin.id }}" class="form-label">Nouveau mot de passe</label>
+                                                <input name="newPassword" type="password" class="form-control" id="newPassword-{{ admin.id }}" required>
+                                                <div class="invalid-feedback">Veuillez entrer un nouveau mot de passe.</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="renewPassword-{{ admin.id }}" class="form-label">Confirmer le mot de passe</label>
+                                                <input name="renewPassword" type="password" class="form-control" id="renewPassword-{{ admin.id }}" required>
+                                                <div class="invalid-feedback">Veuillez confirmer votre nouveau mot de passe.</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary">Changer mot de passe</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div><!-- End Bordered Tabs -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/chart.js/chart.umd.js') }}"></script>
+    <script src="{{ asset('vendor/echarts/echarts.min.js') }}"></script>
+    <script src="{{ asset('vendor/quill/quill.js') }}"></script>
+    <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
+    <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+{% endblock %}

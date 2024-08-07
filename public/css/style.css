@@ -1242,3 +1242,7 @@ h6 {
 .nav-item.red-color a span {
   color: red; /* Change la couleur du texte dans le span en rouge */
 }
+/* Personnalisation des notifications Toastr */
+.toastr {
+  z-index: 1050 !important; /* Assure que les notifications apparaissent au-dessus des autres éléments */
+}

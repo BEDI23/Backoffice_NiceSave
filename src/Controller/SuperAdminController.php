@@ -95,10 +95,30 @@ class SuperAdminController extends AbstractController
     {
         $admins = $adminRepository->findAll();
 
-        return $this->render('super_admin/ProfileAdmin.html.twig', [
+        return $this->render('ListeProfileAdmin.html.twig', [
             'admins' => $admins,
         ]);
     }
+
+    #[Route('/admin/{id}/delete', name: 'app_DeleteAdmin', methods: ['POST'])]
+    public function DeleteAdmin(AdminRepository $adminRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $admin = $adminRepository->find($id);
+
+        if (!$admin) {
+            throw $this->createNotFoundException('Administrateur non trouvé');
+        }
+
+        $entityManager->remove($admin);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Administrateur supprimé avec succès.');
+
+        return $this->redirectToRoute('app_admin');
+    }
+
+
+
 
     #[Route('/register/Admin', name: 'app_registerAdmin')]
     public function register(Request $request, EntityManagerInterface $em,
@@ -149,28 +169,28 @@ class SuperAdminController extends AbstractController
             throw $this->createNotFoundException('L\'administrateur n\'existe pas.');
         }
 
-        // Retrieve data from the request
+        // Récupérer les données du formulaire
         $firstname = $request->request->get('firstname');
         $lastname = $request->request->get('lastname');
         $email = $request->request->get('email');
         $address = $request->request->get('address');
-        $phoneNumber = $request->request->get('phoneNumber');
+        $Number = $request->request->get('phone');
 
-        // Update admin profile
+        // Mettre à jour le profil de l'administrateur
         $admin->setFirstname($firstname);
         $admin->setLastname($lastname);
         $admin->setEmail($email);
         $admin->setAddress($address);
-        $admin->setPhoneNumber($phoneNumber);
+        $admin->setNumber($Number );
 
-        // Save changes
-            $em->persist($admin);
-            $em->flush();
-            $this->addFlash('success', 'Profil mis à jour avec succès.');
-
+        // Sauvegarder les modifications
+        $em->persist($admin);
+        $em->flush();
+        $this->addFlash('success', 'Profil mis à jour avec succès.');
 
         return $this->redirectToRoute('app_admin');
     }
+
 
     #[Route('/admin/{id}/change-password', name: 'app_ChangePasswordAdmin', methods: ['POST'])]
     public function changePasswordAdmin(Request $request, AdminRepository $adminRepository,
