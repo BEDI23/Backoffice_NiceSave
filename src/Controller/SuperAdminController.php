@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class SuperAdminController extends AbstractController
 {
 
-    #[Route('/edit/SuperAdmin', name: 'app_editSuperAdmin')]
+    #[Route('/edit/profile', name: 'app_editSuperAdmin')]
     public function edit(Request $request, EntityManagerInterface $em, Security $security): Response
     {
         $user = $security->getUser();
@@ -46,7 +46,7 @@ class SuperAdminController extends AbstractController
             'user' => $user,
         ]);
     }
-    #[Route('/edit/ChangePassword', name: 'app_ChangePasswordSuper')]
+    #[Route('/ChangePassword/profile', name: 'app_ChangePasswordSuper')]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, Security $security,
                                    EntityManagerInterface $em): Response
     {
@@ -90,7 +90,7 @@ class SuperAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/Admin', name: 'app_admin')]
+    #[Route('/super-admin/Admin', name: 'app_admin')]
     public function showAdmin(AdminRepository $adminRepository): Response
     {
         $admins = $adminRepository->findAll();
@@ -100,7 +100,7 @@ class SuperAdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/{id}/delete', name: 'app_DeleteAdmin', methods: ['POST'])]
+    #[Route('/super-admin/admin/{id}/delete', name: 'app_DeleteAdmin', methods: ['POST'])]
     public function DeleteAdmin(AdminRepository $adminRepository, int $id, EntityManagerInterface $entityManager): Response
     {
         $admin = $adminRepository->find($id);
@@ -120,7 +120,7 @@ class SuperAdminController extends AbstractController
 
 
 
-    #[Route('/register/Admin', name: 'app_registerAdmin')]
+    #[Route('/super-admin/register/Admin', name: 'app_registerAdmin')]
     public function register(Request $request, EntityManagerInterface $em,
                              UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -159,7 +159,7 @@ class SuperAdminController extends AbstractController
         return $this->render('super_admin/NewAdmin.html.twig');
     }
 
-    #[Route('/admin/{id}/edit', name: 'app_editAdmin', methods: ['POST'])]
+    #[Route('/super-admin/admin/{id}/edit', name: 'app_editAdmin', methods: ['POST'])]
     public function editProfile(Request $request, AdminRepository $adminRepository,
                                 int $id, EntityManagerInterface $em): Response
     {
@@ -192,7 +192,7 @@ class SuperAdminController extends AbstractController
     }
 
 
-    #[Route('/admin/{id}/change-password', name: 'app_ChangePasswordAdmin', methods: ['POST'])]
+    #[Route('/super-admin/admin/{id}/change-password', name: 'app_ChangePasswordAdmin', methods: ['POST'])]
     public function changePasswordAdmin(Request $request, AdminRepository $adminRepository,
                                         int $id, UserPasswordHasherInterface $passwordHasher,
                                         EntityManagerInterface $em): Response

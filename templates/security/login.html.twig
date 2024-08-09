@@ -38,7 +38,7 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="pt-4 pb-2">
-                                    <h5 class="card-title text-center pb-0 fs-4">Connectez-vous a votre compte</h5>
+                                    <h5 class="card-title text-center pb-0 fs-4">Connectez-vous à votre compte</h5>
                                 </div>
 
                                 <form method="post" class="row g-3 needs-validation" novalidate>
@@ -59,6 +59,10 @@
                                         <label for="inputPassword" class="form-label">Mot de passe</label>
                                         <input type="password" name="password" id="inputPassword" class="form-control" required>
                                         <div class="invalid-feedback">Entrer votre password!</div>
+                                    </div>
+
+                                    <div class="col-12 text-center mt-3">
+                                        <a href="{{ path('app_forgot_password') }}" class="text-decoration-none">Mot de passe oublié ?</a>
                                     </div>
 
                                     <div class="col-12">

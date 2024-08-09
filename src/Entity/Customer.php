@@ -16,7 +16,7 @@ class Customer extends User
     #[ORM\Column(length: 12,nullable: true)]
     private ?string $number = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20,nullable: true)]
     private ?string $country = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
